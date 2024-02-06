@@ -12,17 +12,4 @@ users = {
     }
 }
 
-card = {
-    '1': {
-        'year': '2019',
-        'make': 'Dodge',
-        'model': 'Ram TRX',
-        'user_id': '1'
-    },
-    '2': {
-        'year': '2009',
-        'make': 'Infiniti',
-        'model': 'G37S',
-        'user_id': '2'
-    }
-}
+card = {}
