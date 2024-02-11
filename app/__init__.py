@@ -16,7 +16,7 @@ import requests
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-from models.card_model import card_model
+from models.card_model import CardModel
 from models.users_model import UserModel
 
 from resources.card import bp as card_bp
