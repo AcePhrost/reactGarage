@@ -1,9 +1,11 @@
 from flask import Flask,request
 from uuid import uuid4
+from flask.views import MethodView
 
 
-from app import app
+from schemas import CardSchema
 from db import card, users
+from . import bp
 
 @app.get('/card')
 def get_cards():

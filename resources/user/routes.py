@@ -1,8 +1,11 @@
 from flask import request
 from uuid import uuid4
+from flask.views import MethodView
 
-from app import app
+from . import bp
 from db import users
+
+from schemas import UserSchema
 
 @app.get('/user')
 def user():

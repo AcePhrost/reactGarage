@@ -1,8 +1,29 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_smorest import Api
 from db import card
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+from Config import Config
+
 app = Flask(__name__)
+app.config.from_object(Config)
+api = Api(app)
+
 import requests
+
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+from models.card_model import card_model
+from models.users_model import UserModel
+
+from resources.card import bp as card_bp
+api.register_blueprint(card_bp)
+
+from resources.user import bp as user_bp
+api.register_blueprint(user_bp)
 
 
 headers= {'accept': 'application/json'}
@@ -24,6 +45,3 @@ for item in data['data']:
     # data.make.name
     id += 1
 CORS(app)
-
-from resources.card import routes
-from resources.user import routes
