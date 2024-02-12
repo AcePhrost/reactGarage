@@ -9,14 +9,17 @@ from app import app
 
 @app.get('/api/user')
 def user():
-    users=UserModel.from_dict()
-    print(users)
-    return{'users': list(users.values())}, 200
+    user=UserModel()
+    users=user.users()
+    
+    return users, 200
 
 @app.get('/api/user/<user_id>')
 def get_user(user_id):
   try:
-    return { 'user': users[user_id] } 
+    user=UserModel()
+    u=user.user(user_id)
+    return u
   except:
     return {'message': 'invalid user'}, 400
 
@@ -28,16 +31,20 @@ def create_user():
     for k in ['username', 'email', 'password']:
         if k not in user_data:
             return { 'message' : 'Please include Username, Password, and Email'}, 400
-    users[uuid4()] = user_data
-    return { 'message' : f'{user_data["username"]} created'}, 201
+
+    ##users[uuid4()] = user_data
+    user=UserModel()
+    resp=user.create(user_data)
+    return resp, 201
 
 @app.put('/api/user/<user_id>')
 def update_user(user_id):
     try:
-        user = users[user_id]
+        
         user_data = request.get_json()
-        user |= user_data
-        return { 'message': f'{user["username"]} updated'}, 202
+        user=UserModel()
+        resp=user.update(user_data, user_id)
+        return { 'message': f'{user_data["username"]} updated'}, 202
     except KeyError:
         return {'message': "Invalid User"}, 400
 
@@ -46,7 +53,8 @@ def delete_user(user_id):
   # user_data = request.get_json()
   # username = user_data['username']
     try:
-        del users[user_id]
+        user=UserModel()
+        user.delete(user_id)
         return { 'message': f'User Deleted' }, 202
     except:
         return {'message': "Invalid username"}, 400
