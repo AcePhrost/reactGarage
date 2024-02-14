@@ -28,6 +28,7 @@ def add_card(card_id):
 def upgrade_card(card_id):
     if card_id in card:
         card_data = request.get_json()
+        print("card", card[card_id])
         if card_data['user_id'] == card[card_id]['user_id']:
             card[card_id]['model'] = card_data['model']
             return jsonify({'message': 'Card Upgraded'}), 202

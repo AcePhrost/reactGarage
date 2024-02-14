@@ -7,6 +7,7 @@ class UserSchema(Schema):
   password = fields.Str(required = True, load_only = True )
   first_name = fields.Str()
   last_name = fields.Str()
+  tokens = fields.Int()
 
 
 class CardSchema(Schema):

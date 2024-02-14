@@ -12,12 +12,14 @@ class UserModel(db.Model):
   password_hash = db.Column(db.String(250), nullable = False )
   first_name = db.Column(db.String(30))
   last_name = db.Column(db.String(30))
+  tokens = db.Column(db.Integer, nullable = True)
 
   def __repr__(self):
     return f'<User: {self.username}>'
 
   def toJson(self):
-    return {'id':self.id, 'username':self.username, 'email':self.email, 'first_name':self.first_name, 'last_name':self.last_name}
+    return {'id':self.id, 'username':self.username, 'email':self.email, 'first_name':self.first_name, 'last_name':self.last_name, 'tokens': self.tokens}
+  
   def commit(self):
     db.session.add(self)
     db.session.commit()
@@ -28,8 +30,8 @@ class UserModel(db.Model):
 
   def user(self, id):
     try:
-      u =db.session.query(UserModel).filter(id==id).all()
-      return u[0].toJson()
+      u =db.session.query(UserModel).get(id)
+      return u.toJson()
     except:
       return {'message':'error finding user'}
   def users(self):
@@ -44,12 +46,13 @@ class UserModel(db.Model):
       pwd = u['password']
  
       pwd=generate_password_hash(pwd)
-      temp =UserModel(username=u['username'], email=u['email'],password_hash= pwd )
+      temp =UserModel(username=u['username'], email=u['email'], password_hash= pwd, tokens=u['tokens'])
       db.session.add(temp)
       db.session.commit()
       un=u['username']
       return { 'message' : f'{un} created'}
-    except:
+    except Exception as e:
+      print(e)
       return { 'message' : 'Error creating user'}
 
   def update(self, u, id):
