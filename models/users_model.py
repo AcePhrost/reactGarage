@@ -28,8 +28,9 @@ class UserModel(db.Model):
     db.session.delete(self)
     db.session.commit()
 
-  def user(self, id):
+  def get(self, id):
     try:
+      print ("get user by id:", id)
       u =db.session.query(UserModel).get(id)
       return u.toJson()
     except:
@@ -64,6 +65,26 @@ class UserModel(db.Model):
       return { 'message' : f'{un} created'}
     except:
       return { 'message' : 'Error creating user'}
+
+  def updateToken(self, id, token):
+    try:
+      print (" update:",id)
+      user = db.session.query(UserModel).get(id)
+      print("updateToken: ",user )
+      tokens=user.tokens
+      tokens=tokens + token
+      print ("tokens:", tokens)
+      user.tokens=tokens
+      print("updating")
+      
+      #db.session.
+      print("updated")
+      db.session.commit()
+
+      return { 'message' : f'token updated'}
+    except Exception as ex:
+      print(ex)
+      return { 'message' : 'Error updating token', 'id':id, 'token':token}
 
   def delete(self, id):
     try:

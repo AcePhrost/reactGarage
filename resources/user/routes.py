@@ -86,10 +86,10 @@ def currentUser():
 @app.get('/api/user/<user_id>')
 def get_user(user_id):
   try:
-    request.h
-    user=UserModel()
-    u=user.user(user_id)
-    return u
+    print ("GET USER:", user_id)
+    model=UserModel()
+    user=model.get(user_id)
+    return user
   except:
     return {'message': 'invalid user'}, 400
 

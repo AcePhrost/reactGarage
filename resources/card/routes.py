@@ -3,20 +3,21 @@ from uuid import uuid4
 from db import card, users  # Assuming you have imported your data structures correctly
 from app import app
 from models.card_model import CardModel
+from models.users_model import UserModel
 @app.route('/api/card', methods=['GET'])
 def get_cards():
     return { 'card': list(card.values()) }
 
-@app.route('/api/my/card', methods=['GET'])
-def get_cards1():
+@app.route('/api/card/user/<user_id>', methods=['GET'])
+def get_user_card(user_id):
     card=CardModel()
-    list=card.cards()
+    list=card.cardsForUser(user_id)
     return { 'card': list }
-    #return jsonify({'card': list(card.values())}), 200
-
-@app.route('/api/card/user_id', methods=['GET'])
-def get_card(user_id):
-    card.CardModel()
+@app.route('/api/card/<car_id>', methods=['GET'])
+def get_card(car_id):
+    card=CardModel()
+    list=card.cardsById(int(car_id))
+    return { 'card': list }
 
 @app.route('/api/card', methods=['POST'])
 def add_card():
@@ -24,6 +25,12 @@ def add_card():
     print("post card:", card_data)
     card = CardModel()
     resp=card.create(card_data)
+    print("RESP", resp)
+    if resp['status']==1:
+        print("update token")
+        user=UserModel()
+        stat=user.updateToken(int(card_data['user_id']), -1)
+        print("STAT:", stat)
     return resp, 201
 
 @app.route('/api/card/<card_id>', methods=['PUT'])
@@ -37,7 +44,7 @@ def upgrade_card(card_id):
 @app.route('/api/card/<card_id>', methods=['DELETE'])
 def remove_card(card_id):
     card = CardModel()
-    resp=card.delete(card_id)
+    resp=card.delete(int(card_id))
     return resp, 201
 
 
