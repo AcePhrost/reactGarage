@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,session
 from flask_cors import CORS
 from flask_smorest import Api
 from db import card
@@ -10,6 +10,8 @@ from Config import Config
 app = Flask(__name__)
 app.config.from_object(Config)
 api = Api(app)
+api.secret_key="My Big Secret"
+#session.permanent=True
 
 import requests
 

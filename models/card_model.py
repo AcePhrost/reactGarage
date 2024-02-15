@@ -8,23 +8,51 @@ class CardModel(db.Model):
   year = db.Column(db.String, nullable = False)
   make = db.Column(db.String, nullable = False)
   model = db.Column(db.String, nullable = False)
-  user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable = False)
+  user_id = db.Column(db.Integer, nullable = False)
 
-def __repr__(self):
-    return '<make {}>'.format(self.make)
+  def __repr__(self):
+      return '<make {}>'.format(self.make)
 
-def commit(self):
-    db.session.add(self)
+  def toJson(self):
+      return {'id':self.id, 'year':self.year, 'make':self.make, 'model':self.model, 'userId':self.user_id}
+
+  def commit(self):
+      db.session.add(self)
+      db.session.commit()
+
+  def cards(self):
+      temp=db.session.query(CardModel).all()
+      cards=[]
+      for card in temp:
+        cards.append(card.toJson())
+      return cards
+
+  def create(self, c):
+
+      card =CardModel(year=c['year'], make=c['make'], model=c['make'], user_id=c['user_id'])
+      db.session.add(card)
+      db.session.commit()
+      return { 'message' : f'card created'}
+      #temp =UserModel(username=u['username'], email=u['email'], password_hash= pwd, tokens=u['tokens'])
+        
+  def update(self, c, id):
+      try:
+        print (id, " update:", c)
+        db.session.query(CardModel).filter(id==id).update(c)
+        db.session.commit()
+      
+        return { 'message' : f'card update'}
+      except:
+        return { 'message' : 'Error creating user'}
+
+  def delete(self):
+    db.session.delete(self)
     db.session.commit()
-
-def delete(self):
-  db.session.delete(self)
-  db.session.commit()
-  # def __init__(self, year, make, model, rarity):
-  #   self.year = year
-  #   self.make = make
-  #   self.model = model
-  #   self.rarity = rarity
+    # def __init__(self, year, make, model, rarity):
+    #   self.year = year
+    #   self.make = make
+    #   self.model = model
+    #   self.rarity = rarity
 
   
 

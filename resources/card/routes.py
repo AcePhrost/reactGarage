@@ -2,48 +2,43 @@ from flask import Flask, request, jsonify
 from uuid import uuid4
 from db import card, users  # Assuming you have imported your data structures correctly
 from app import app
-
+from models.card_model import CardModel
 @app.route('/api/card', methods=['GET'])
 def get_cards():
-    return jsonify({'card': list(card.values())}), 200
+    return { 'card': list(card.values()) }
 
-@app.route('/api/card/<card_id>', methods=['GET'])
-def get_card(card_id):
-    if card_id in card:
-        return jsonify({'card': card[card_id]}), 200
-    else:
-        return jsonify({'message': "Invalid card"}), 400
+@app.route('/api/my/card', methods=['GET'])
+def get_cards1():
+    card=CardModel()
+    list=card.cards()
+    return { 'card': list }
+    #return jsonify({'card': list(card.values())}), 200
 
-@app.route('/api/card/<card_id>', methods=['POST'])
-def add_card(card_id):
+@app.route('/api/card/user_id', methods=['GET'])
+def get_card(user_id):
+    card.CardModel()
+
+@app.route('/api/card', methods=['POST'])
+def add_card():
     card_data = request.get_json()
-    user_id = card_data.get('user_id')  # Accessing user_id safely
-    if user_id in users:
-        card[card_id] = card_data  # Using the provided card_id
-        return jsonify({'message': "Card Added"}), 201
-    else:
-        return jsonify({'message': "User not found"}), 401
+    print("post card:", card_data)
+    card = CardModel()
+    resp=card.create(card_data)
+    return resp, 201
 
 @app.route('/api/card/<card_id>', methods=['PUT'])
 def upgrade_card(card_id):
-    if card_id in card:
-        card_data = request.get_json()
-        print("card", card[card_id])
-        if card_data['user_id'] == card[card_id]['user_id']:
-            card[card_id]['model'] = card_data['model']
-            return jsonify({'message': 'Card Upgraded'}), 202
-        else:
-            return jsonify({'message': "Unauthorized"}), 401
-    else:
-        return jsonify({'message': "Card not found"}), 404
+    card_data = request.get_json()
+    print("put card:", card_data)
+    card = CardModel()
+    resp=card.update(card_data, card_id)
+    return resp, 201
 
 @app.route('/api/card/<card_id>', methods=['DELETE'])
 def remove_card(card_id):
-    if card_id in card:
-        del card[card_id]
-        return jsonify({"message": "Card Deleted"}), 202
-    else:
-        return jsonify({'message': "Invalid Card"}), 400
+    card = CardModel()
+    resp=card.delete(card_id)
+    return resp, 201
 
 
 
